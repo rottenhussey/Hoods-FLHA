@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no" />
+  <meta name="theme-color" content="#1a3a5c" />
+  <title>HCR Field Hazard Assessment</title>
+  <link rel="stylesheet" href="/src/css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <img src="/hcr-logo.png" alt="HCR" class="logo" onerror="this.style.display='none'" />
+    <div class="header-text">
+      <p class="company-name">Hoods Crane Rental</p>
+      <h1>Work Site / Lift Hazard Assessment</h1>
+      <p>&amp; Tool Box Meeting Report</p>
+    </div>
+    <div id="connection-badge" class="badge badge-offline">Offline</div>
+  </header>
+
+  <main id="app">
+    <div id="banner" class="banner hidden"></div>
+
+    <!-- Job header fields -->
+    <section class="card">
+      <h2>Job Details</h2>
+      <div class="quick-actions">
+        <button type="button" class="btn-secondary" id="load-previous-btn">Load Previous Day</button>
+        <button type="button" class="btn-secondary btn-danger-outline" id="clear-all-btn">Clear All</button>
+      </div>
+      <div class="grid-2">
+        <label>Date <input type="date" id="f-date" required /></label>
+        <label>Time <input type="time" id="f-time" required /></label>
+        <label>Customer <input type="text" id="f-customer" required /></label>
+        <label>Site Location <input type="text" id="f-site" required /></label>
+        <label>Operator Name(s) <input type="text" id="f-operator" required /></label>
+        <label>Operator Initials <input type="text" id="f-operator-initials" maxlength="6" /></label>
+        <label>Signal Person <input type="text" id="f-signal" /></label>
+        <label>Crane Field Order # <input type="text" id="f-order" /></label>
+        <label>Crane Unit # 1 <input type="text" id="f-unit1" /></label>
+        <label>Crane Unit # 2 <input type="text" id="f-unit2" /></label>
+        <label>Load Weight <input type="number" id="f-load-weight" step="any" /></label>
+        <label>Units
+          <select id="f-load-unit">
+            <option value="lb">lb</option>
+            <option value="kg">kg</option>
+          </select>
+        </label>
+      </div>
+      <label class="full">Job / Task or Load Description
+        <textarea id="f-job-desc" rows="2"></textarea>
+      </label>
+      <label class="full">Consultant Email (optional — the office copy is sent automatically either way)
+        <input type="email" id="f-supervisor-email" placeholder="consultant@example.com (leave blank if not needed)" />
+      </label>
+    </section>
+
+    <!-- Observation items get injected here -->
+    <a href="/instructions.html" target="_blank" class="guide-link">📋 How to score a RISK rating — Hazard Priority Ranking Guide</a>
+    <section id="observation-sections"></section>
+
+    <!-- Crane set-up changes -->
+    <section class="card">
+      <h2>Crane Set-Up Changes</h2>
+      <div id="setup-changes"></div>
+    </section>
+
+    <!-- Tasks / condition change -->
+    <section class="card">
+      <h2>Tasks / Condition Change &amp; Risk Ranking</h2>
+      <textarea id="f-task-notes" rows="4" placeholder="Describe any task or condition changes and risk ranking..."></textarea>
+    </section>
+
+    <!-- Hazard control measures -->
+    <section class="card">
+      <h2>Hazard Control Measures</h2>
+      <div id="hazard-controls"></div>
+      <button type="button" class="btn-secondary" id="add-hazard-row">+ Add Row</button>
+    </section>
+
+    <!-- Toolbox meeting attendees -->
+    <section class="card">
+      <h2>Toolbox Meeting Attendees</h2>
+      <div id="attendees"></div>
+      <button type="button" class="btn-secondary" id="add-attendee-row">+ Add Attendee</button>
+    </section>
+
+    <p class="footer-note">This form is to be completed for every crane set-up. If he/she cannot avoid hazard(s) found, each crane employee must contact his supervisor / branch manager prior to executing the lift!</p>
+
+    <div class="submit-bar">
+      <button type="button" id="submit-btn" class="btn-primary">Submit Assessment</button>
+    </div>
+
+    <section class="card">
+      <h2>My Past Submissions</h2>
+      <div id="history-list"><p class="muted">Loading...</p></div>
+    </section>
+  </main>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>
