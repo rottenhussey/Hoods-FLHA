@@ -91,7 +91,7 @@ export async function generateFlhaPdf(data) {
     ['Date', data.date], ['Time', data.time], ['Customer', data.customer],
     ['Site Location', data.site], ['Operator(s)', data.operator], ['Operator Initials', data.operatorInitials],
     ['Signal Person', data.signal], ['Crane Field Order #', data.order], ['Load Weight', `${data.loadWeight || ''} ${data.loadUnit || ''}`],
-    ['Crane Unit #1', data.unit1], ['Crane Unit #2', data.unit2], ['Supervisor Email', data.supervisorEmail]
+    ['Crane Unit #1', data.unit1], ['Crane Unit #2', data.unit2], ['Consultants Email', data.supervisorEmail]
   ];
   let fx = margin;
   fields.forEach((f, i) => {
