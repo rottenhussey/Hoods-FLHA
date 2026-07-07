@@ -6,6 +6,21 @@ import SignaturePad from 'signature_pad';
 
 const state = { items: {} };
 
+// A random ID stuck in localStorage the first time this device opens the app —
+// used only to scope "My Past Submissions" to what was filed from this device.
+// This is a convenience filter, not a security boundary — the app has no login,
+// so there's no real per-user identity for Supabase to enforce.
+const DEVICE_ID_KEY = 'hcr_flha_device_id';
+function getDeviceId() {
+  let id = localStorage.getItem(DEVICE_ID_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(DEVICE_ID_KEY, id);
+  }
+  return id;
+}
+const DEVICE_ID = getDeviceId();
+
 // ---------- Render observation categories ----------
 const sectionsEl = document.getElementById('observation-sections');
 FLHA_CATEGORIES.forEach(cat => {
@@ -405,7 +420,8 @@ async function submitAssessment(data) {
     submission_date: data.date,
     supervisor_email: data.supervisorEmail,
     pdf_path: filename,
-    form_data: data
+    form_data: data,
+    device_id: DEVICE_ID
   }).select().single();
   if (insertErr) throw insertErr;
 
@@ -484,6 +500,7 @@ async function loadHistory() {
     const { data, error } = await supabase
       .from('flha_submissions')
       .select('id, site_location, submission_date, created_at')
+      .eq('device_id', DEVICE_ID)
       .order('created_at', { ascending: false })
       .limit(20);
     if (error) throw error;
