@@ -214,6 +214,29 @@ textarea { resize: vertical; font-family: inherit; }
 .banner.info { background: #e6edf3; color: var(--steel); }
 .hidden { display: none; }
 
+.test-mode-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  width: fit-content;
+}
+.test-mode-toggle-row input { width: auto; }
+.test-mode-banner {
+  background: #4a1010;
+  color: #ffd8d0;
+  border: 2px solid var(--risk);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 .muted { color: var(--muted); font-size: 0.85rem; }
 
 .history-item {

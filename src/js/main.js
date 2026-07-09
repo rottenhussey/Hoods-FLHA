@@ -21,6 +21,24 @@ function getDeviceId() {
 }
 const DEVICE_ID = getDeviceId();
 
+// ---------- Test Mode ----------
+// Persisted so it survives page reloads during a debugging session — but shown with
+// a hard-to-miss red banner so it's not easy to forget it's on.
+const TEST_MODE_KEY = 'hcr_flha_test_mode';
+const testModeToggle = document.getElementById('test-mode-toggle');
+const testModeBanner = document.getElementById('test-mode-banner');
+
+function isTestMode() {
+  return localStorage.getItem(TEST_MODE_KEY) === 'true';
+}
+function setTestMode(on) {
+  localStorage.setItem(TEST_MODE_KEY, on ? 'true' : 'false');
+  testModeToggle.checked = on;
+  testModeBanner.classList.toggle('hidden', !on);
+}
+testModeToggle.addEventListener('change', () => setTestMode(testModeToggle.checked));
+setTestMode(isTestMode());
+
 // ---------- Render observation categories ----------
 const sectionsEl = document.getElementById('observation-sections');
 FLHA_CATEGORIES.forEach(cat => {
@@ -433,11 +451,13 @@ async function submitAssessment(data) {
   }).select().single();
   if (insertErr) throw insertErr;
 
-  // Trigger email via Edge Function
-  const { error: fnErr } = await supabase.functions.invoke('send-flha', {
-    body: { submissionId: row.id, pdfBase64, filename, supervisorEmail: data.supervisorEmail, site: data.site, date: data.date }
-  });
-  if (fnErr) throw fnErr;
+  // Trigger email via Edge Function — skipped entirely in Test Mode.
+  if (!isTestMode()) {
+    const { error: fnErr } = await supabase.functions.invoke('send-flha', {
+      body: { submissionId: row.id, pdfBase64, filename, supervisorEmail: data.supervisorEmail, site: data.site, date: data.date }
+    });
+    if (fnErr) throw fnErr;
+  }
 
   return row;
 }
@@ -456,7 +476,12 @@ document.getElementById('submit-btn').addEventListener('click', async () => {
   try {
     if (!navigator.onLine) throw new Error('offline');
     await submitAssessment(data);
-    showBanner('Assessment submitted and sent to office' + (data.supervisorEmail ? ' + consultant.' : '.'), 'success');
+    showBanner(
+      isTestMode()
+        ? 'Test Mode: saved to database, no email sent.'
+        : 'Assessment submitted and sent to office' + (data.supervisorEmail ? ' + consultant.' : '.'),
+      'success'
+    );
     document.querySelectorAll('#observation-sections input, .card input, .card textarea, .card select').forEach(el => {
       if (el.dataset.role || el.dataset.item || el.dataset.setup) return; // handled by resetItemsHazardsAttendees
       if (el.id === 'f-load-unit') { el.value = 'lb'; return; }

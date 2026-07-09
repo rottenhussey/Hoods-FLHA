@@ -20,6 +20,12 @@
 
   <main id="app">
     <div id="banner" class="banner hidden"></div>
+    <label class="test-mode-toggle-row">
+      <input type="checkbox" id="test-mode-toggle" /> Test Mode (saves to database, skips sending the email)
+    </label>
+    <div id="test-mode-banner" class="test-mode-banner hidden">
+      🧪 TEST MODE IS ON — submissions will save but <strong>no email will be sent</strong>. Turn this off before real use.
+    </div>
 
     <!-- Job header fields -->
     <section class="card">
