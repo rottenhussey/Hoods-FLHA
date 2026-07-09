@@ -366,6 +366,10 @@ function loadPreviousDay() {
   // Re-apply each observation item's saved status, rating, and signalman name.
   Object.entries(last.items || {}).forEach(([itemId, itemState]) => {
     if (itemState.status) setItemStatus(itemId, itemState.status);
+    // Items like #18 (Wind Speed) have no status at all — just a typed value — so
+    // state.items[itemId] must be initialized here too, not only inside setItemStatus,
+    // or the very next line throws and silently kills every item after this one.
+    state.items[itemId] = state.items[itemId] || {};
     if (itemState.riskRating) {
       const ratingInput = sectionsEl.querySelector(`.risk-rating-input[data-item="${itemId}"]`);
       if (ratingInput) { ratingInput.value = itemState.riskRating; state.items[itemId].riskRating = itemState.riskRating; }
