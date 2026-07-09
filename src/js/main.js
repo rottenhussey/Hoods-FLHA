@@ -499,13 +499,13 @@ async function loadHistory() {
   try {
     const { data, error } = await supabase
       .from('flha_submissions')
-      .select('id, site_location, submission_date, created_at')
+      .select('id, site_location, submission_date, created_at, pdf_path')
       .eq('device_id', DEVICE_ID)
       .order('created_at', { ascending: false })
       .limit(20);
     if (error) throw error;
     data.forEach(row => {
-      html += `<div class="history-item"><span>${row.site_location} — ${row.submission_date}</span><span class="muted">Sent</span></div>`;
+      html += `<div class="history-item history-item-clickable" data-pdf-path="${row.pdf_path}"><span>${row.site_location} — ${row.submission_date}</span><span class="muted">View PDF &rarr;</span></div>`;
     });
   } catch (e) {
     console.warn('Could not load history', e);
@@ -514,3 +514,25 @@ async function loadHistory() {
   historyEl.innerHTML = html || '<p class="muted">No submissions yet.</p>';
 }
 loadHistory();
+
+// Bucket is private, so we generate a short-lived signed link on click rather than
+// storing/using a permanent public URL.
+document.getElementById('history-list').addEventListener('click', async (e) => {
+  const item = e.target.closest('.history-item-clickable');
+  if (!item) return;
+  const pdfPath = item.dataset.pdfPath;
+  if (!pdfPath) return;
+
+  const original = item.innerHTML;
+  item.innerHTML = '<span>Loading…</span>';
+  try {
+    const { data, error } = await supabase.storage.from('flha-reports').createSignedUrl(pdfPath, 3600);
+    if (error) throw error;
+    window.open(data.signedUrl, '_blank');
+  } catch (err) {
+    console.error(err);
+    showBanner('Could not open that report — try again.', 'error');
+  } finally {
+    item.innerHTML = original;
+  }
+});

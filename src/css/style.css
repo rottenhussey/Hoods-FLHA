@@ -227,6 +227,8 @@ textarea { resize: vertical; font-family: inherit; }
   align-items: center;
 }
 .history-item .sync-pending { color: var(--accent); font-weight: 600; }
+.history-item-clickable { cursor: pointer; }
+.history-item-clickable:hover { border-color: var(--steel); background: #f7f9fa; }
 
 /* ---------- Guide link on the main form ---------- */
 .guide-link {
