@@ -380,18 +380,22 @@ function loadPreviousDay() {
     }
   });
 
-  // Fill in the measure text for auto-created hazard rows, and re-add any manual
-  // (non-numbered) hazard rows exactly as they were.
-  hazardEl.innerHTML = '';
+  // Fill in the measure text for auto-created hazard rows. These rows already exist —
+  // the items loop above created one for every item whose saved status was RISK,
+  // regardless of whether a measure was typed in yet. We only overlay the saved text
+  // here and add back any manual (non-numbered) rows; we deliberately do NOT clear
+  // hazardEl first, since doing that previously deleted the row entirely for any RISK
+  // item that hadn't had its measure text typed in yet at save time.
+  const blankPlaceholder = Array.from(hazardEl.children).find(r => !r.dataset.autoItem);
   (last.hazardControls || []).forEach(h => {
     if (h.itemNum && last.items?.[h.itemNum]?.status === 'risk') {
-      ensureHazardRowForItem(h.itemNum);
-      const row = hazardEl.querySelector(`[data-auto-item="${h.itemNum}"] [data-role="measure"]`);
-      if (row) row.value = h.measure;
+      const measureInput = hazardEl.querySelector(`[data-auto-item="${h.itemNum}"] [data-role="measure"]`);
+      if (measureInput) measureInput.value = h.measure;
     } else {
       addHazardRow(h);
     }
   });
+  if (blankPlaceholder && hazardEl.children.length > 1) blankPlaceholder.remove();
   if (!hazardEl.children.length) addHazardRow();
 
   attendeesEl.innerHTML = '';
